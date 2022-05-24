@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	{{.importPackages}}
-    "panda/common/middleware"
 )
 
 var configFile = flag.String("f", "etc/{{.serviceName}}.yaml", "the config file")
