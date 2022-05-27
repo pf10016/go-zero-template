@@ -4,8 +4,7 @@ import (
 	"context"
 	"time"
 
-	"panda/common/globalkey"
-	"panda/common/xerr"
+ 	"panda/common/xerr"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
