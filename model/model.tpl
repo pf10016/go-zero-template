@@ -58,8 +58,7 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 }
 
 func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,session sqlx.Session,data *{{.upperStartCamelObject}}) error {
-	data.DelState = globalkey.DelStateYes
-	data.DeleteTime = time.Now()
+
 	if err:= m.UpdateWithVersion(ctx,session, data);err!= nil{
 		return errors.Wrapf(xerr.NewErrMsg("删除数据失败"),"{{.upperStartCamelObject}}Model delete err : %+v",err)
 	}
