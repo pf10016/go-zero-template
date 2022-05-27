@@ -3,12 +3,10 @@ package {{.pkg}}
 import (
 	"context"
 
- 	"panda/common/xerr"
 
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/Masterminds/squirrel"
-	"github.com/pkg/errors"
 )
 {{else}}
 import (
@@ -16,7 +14,6 @@ import (
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/Masterminds/squirrel"
-	"github.com/pkg/errors"
 )
 
 {{end}}
