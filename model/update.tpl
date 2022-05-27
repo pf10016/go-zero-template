@@ -16,8 +16,6 @@ func (m *default{{.upperStartCamelObject}}Model) Update(ctx context.Context,sess
 
 func (m *default{{.upperStartCamelObject}}Model) UpdateWithVersion(ctx context.Context,session sqlx.Session,data *{{.upperStartCamelObject}}) error {
 
-	oldVersion := data.Version
-	data.Version += 1
 
 	var sqlResult sql.Result
 	var err error
@@ -26,14 +24,14 @@ func (m *default{{.upperStartCamelObject}}Model) UpdateWithVersion(ctx context.C
 	sqlResult,err =  m.ExecCtx(ctx,func(ctx context.Context,conn sqlx.SqlConn) (result sql.Result, err error) {
 	query := fmt.Sprintf("update %s set %s where {{.originalPrimaryKey}} = {{if .postgreSql}}$1{{else}}?{{end}} and version = ? ", m.table, {{.lowerStartCamelObject}}RowsWithPlaceHolder)
 	if session != nil{
-		return session.ExecCtx(ctx,query, {{.expressionValues}},oldVersion)
+		return session.ExecCtx(ctx,query, {{.expressionValues}})
 	}
-	return conn.ExecCtx(ctx,query, {{.expressionValues}},oldVersion)
+	return conn.ExecCtx(ctx,query, {{.expressionValues}})
 	}, {{.keyValues}}){{else}}query := fmt.Sprintf("update %s set %s where {{.originalPrimaryKey}} = {{if .postgreSql}}$1{{else}}?{{end}} and version = ? ", m.table, {{.lowerStartCamelObject}}RowsWithPlaceHolder)
 	if session != nil{
-		sqlResult,err  =  session.ExecCtx(ctx,query, {{.expressionValues}},oldVersion)
+		sqlResult,err  =  session.ExecCtx(ctx,query, {{.expressionValues}})
 	}else{
-		sqlResult,err  =  m.conn.ExecCtx(ctx,query, {{.expressionValues}},oldVersion)
+		sqlResult,err  =  m.conn.ExecCtx(ctx,query, {{.expressionValues}})
 	}
 	{{end}}
 	if err != nil {
