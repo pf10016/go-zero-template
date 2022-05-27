@@ -2,7 +2,6 @@ package {{.pkg}}
 {{if .withCache}}
 import (
 	"context"
-	"time"
 
  	"panda/common/xerr"
 
