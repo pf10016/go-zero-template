@@ -13,7 +13,6 @@ import (
 {{else}}
 import (
 	"context"
-	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/Masterminds/squirrel"
