@@ -5,6 +5,7 @@ import (
 	"strings"
 	{{if .time}}"time"{{end}}
 
+	"panda/common/xerr"
 
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
