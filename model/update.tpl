@@ -13,27 +13,7 @@ func (m *default{{.upperStartCamelObject}}Model) Update(ctx context.Context,sess
 	}
 	return m.conn.ExecCtx(ctx, query, {{.expressionValues}}){{end}}
 }
-func (m *default{{.upperStartCamelObject}}Model) UpdateWithId(ctx context.Context, session sqlx.Session, updateBuilder squirrel.UpdateBuilder, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) (sql.Result, error) {
-	{{if .withCache}}
-	{{if .containsIndexCache}}data, err:=m.FindOne(ctx, {{.lowerStartCamelPrimaryKey}})
-    	if err!=nil{
-    		return err
-    	}
-    {{end}}
-	{{.keys}}
-    	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
-        query, values, err := updateBuilder.ToSql()
-    	if session != nil{
-			return session.ExecCtx(ctx, query, values...)
-    	}
-    	return conn.ExecCtx(ctx, query, values...)
-    	}, {{.keyValues}}){{else}}
-        query, values, err := updateBuilder.ToSql()
-    	if session != nil{
-    		return session.ExecCtx(ctx,query, values...)
-    	}
-    	return m.conn.ExecCtx(ctx, query, values...){{end}}
-}
+
 func (m *default{{.upperStartCamelObject}}Model) UpdateWithVersion(ctx context.Context,session sqlx.Session,data *{{.upperStartCamelObject}}) error {
 
 	oldVersion := data.Version
