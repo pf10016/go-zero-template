@@ -25,7 +25,7 @@ func (m *default{{.upperStartCamelObject}}Model) UpdateWithId(ctx context.Contex
 	{{if .withCache}}
 	{{if .containsIndexCache}}data, err:=m.FindOne(ctx, {{.lowerStartCamelPrimaryKey}})
     	if err!=nil{
-    		return err
+    		return nil,err
     	}
     {{end}}
 	{{.keys}}

@@ -228,7 +228,7 @@ func (m *default{{.upperStartCamelObject}}Model) RowBuilder() squirrel.SelectBui
 	return squirrel.Select({{.lowerStartCamelObject}}Rows).From(m.table)
 }
 // export logic
-func (m *defaultNodeModel) UpdateBuilder() squirrel.UpdateBuilder {
+func (m *default{{.upperStartCamelObject}}Model) UpdateBuilder() squirrel.UpdateBuilder {
 	return squirrel.Update(m.table)
 }
 // export logic
