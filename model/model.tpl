@@ -29,6 +29,7 @@ type (
 		UpdateBuilder() squirrel.UpdateBuilder
 		CountBuilder(field string) squirrel.SelectBuilder
 		SumBuilder(field string) squirrel.SelectBuilder
+		UpdateWithId(ctx context.Context, session sqlx.Session, updateBuilder squirrel.UpdateBuilder, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) (sql.Result, error)
 		FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error)
 		FindSum(ctx context.Context,sumBuilder squirrel.SelectBuilder) (float64,error)
 		FindCount(ctx context.Context,countBuilder squirrel.SelectBuilder) (int64,error)
@@ -50,7 +51,7 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 		default{{.upperStartCamelObject}}Model: new{{.upperStartCamelObject}}Model(conn{{if .withCache}}, c{{end}}),
 	}
 }
-func (m *default{{.upperStartCamelObject}}Model) UpdateWithId(ctx context.Context, session sqlx.Session, updateBuilder squirrel.UpdateBuilder, id int64) (sql.Result, error) {
+func (m *default{{.upperStartCamelObject}}Model) UpdateWithId(ctx context.Context, session sqlx.Session, updateBuilder squirrel.UpdateBuilder, {{.lowerStartCamelPrimaryKey}} {{.dataType}}) (sql.Result, error) {
 	{{if .withCache}}
 	{{if .containsIndexCache}}data, err:=m.FindOne(ctx, {{.lowerStartCamelPrimaryKey}})
     	if err!=nil{
