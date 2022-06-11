@@ -13,7 +13,6 @@ func (m *default{{.upperStartCamelObject}}Model) Update(ctx context.Context,sess
 	}
 	return m.conn.ExecCtx(ctx, query, {{.expressionValues}}){{end}}
 }
-
 func (m *default{{.upperStartCamelObject}}Model) UpdateWithVersion(ctx context.Context,session sqlx.Session,data *{{.upperStartCamelObject}}) error {
 
 	oldVersion := data.Version
