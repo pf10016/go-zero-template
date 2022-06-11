@@ -26,6 +26,7 @@ type (
 		{{.lowerStartCamelObject}}Model
 		Trans(ctx context.Context,fn func(context context.Context,session sqlx.Session) error) error
 		RowBuilder() squirrel.SelectBuilder
+		UpdateBuilder() squirrel.UpdateBuilder
 		CountBuilder(field string) squirrel.SelectBuilder
 		SumBuilder(field string) squirrel.SelectBuilder
 		FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error)
@@ -49,7 +50,27 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 		default{{.upperStartCamelObject}}Model: new{{.upperStartCamelObject}}Model(conn{{if .withCache}}, c{{end}}),
 	}
 }
-
+func (m *default{{.upperStartCamelObject}}Model) UpdateWithId(ctx context.Context, session sqlx.Session, updateBuilder squirrel.UpdateBuilder, id int64) (sql.Result, error) {
+	{{if .withCache}}
+	{{if .containsIndexCache}}data, err:=m.FindOne(ctx, {{.lowerStartCamelPrimaryKey}})
+    	if err!=nil{
+    		return err
+    	}
+    {{end}}
+	{{.keys}}
+    	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+        query, values, err := updateBuilder.ToSql()
+    	if session != nil{
+			return session.ExecCtx(ctx, query, values...)
+    	}
+    	return conn.ExecCtx(ctx, query, values...)
+    	}, {{.keyValues}}){{else}}
+        query, values, err := updateBuilder.ToSql()
+    	if session != nil{
+    		return session.ExecCtx(ctx,query, values...)
+    	}
+    	return m.conn.ExecCtx(ctx, query, values...){{end}}
+}
 func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error) {
 
 	query, values, err := rowBuilder.ToSql()
@@ -227,7 +248,10 @@ func (m *default{{.upperStartCamelObject}}Model) Trans(ctx context.Context,fn fu
 func (m *default{{.upperStartCamelObject}}Model) RowBuilder() squirrel.SelectBuilder {
 	return squirrel.Select({{.lowerStartCamelObject}}Rows).From(m.table)
 }
-
+// export logic
+func (m *defaultNodeModel) UpdateBuilder() squirrel.UpdateBuilder {
+	return squirrel.Update(m.table)
+}
 // export logic
 func (m *default{{.upperStartCamelObject}}Model) CountBuilder(field string) squirrel.SelectBuilder {
 	return squirrel.Select("COUNT("+field+")").From(m.table)
