@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	{{if .time}}"time"{{end}}
+	"github.com/Masterminds/squirrel"
 	"panda/common/xerr"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
