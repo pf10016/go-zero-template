@@ -1,1 +1,1 @@
-Update(ctx context.Context,session sqlx.Session, newData *{{.upperStartCamelObject}}) ( error)
+Update(ctx context.Context,session sqlx.Session, newData *{{.upperStartCamelObject}}) (sql.Result, error)
