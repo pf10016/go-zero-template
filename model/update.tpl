@@ -1,5 +1,5 @@
 
-func (m *default{{.upperStartCamelObject}}Model) Update(ctx context.Context,session sqlx.Session, data *{{.upperStartCamelObject}})  (sql.Result,error) {
+func (m *default{{.upperStartCamelObject}}Model) Update(ctx context.Context,session sqlx.Session, newData *{{.upperStartCamelObject}})  (sql.Result,error) {
 	{{if .withCache}}{{.keys}}
 	return m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 	query := fmt.Sprintf("update %s set %s where {{.originalPrimaryKey}} = {{if .postgreSql}}$1{{else}}?{{end}}", m.table, {{.lowerStartCamelObject}}RowsWithPlaceHolder)
