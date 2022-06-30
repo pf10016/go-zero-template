@@ -5,6 +5,7 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"panda/common/result"
+	"panda/common/utils"
 
 	{{.ImportPackages}}
 )
@@ -16,7 +17,11 @@ func {{.HandlerName}}(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			result.ParamErrorResult(r,w,err)
 			return
 		}
-
+        //自定义参数效验
+		if err := utils.VerifyTag(req); err != nil {
+			result.ParamErrorResult(r, w, err)
+			return
+		}
 		{{end}}l := {{.LogicName}}.New{{.LogicType}}(r.Context(), svcCtx)
 		{{if .HasResp}}resp, {{end}}err := l.{{.Call}}({{if .HasRequest}}&req{{end}})
 		result.HttpResult(r, w, {{if .HasResp}}resp{{else}}nil{{end}}, err)
