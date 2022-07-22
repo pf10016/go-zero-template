@@ -2,7 +2,9 @@ package {{.pkg}}
 {{if .withCache}}
 import (
 	"context"
+    "panda/common/xerr"
 
+	"github.com/pkg/errors"
     "panda/common/globalkey"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
