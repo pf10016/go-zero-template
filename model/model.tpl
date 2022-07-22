@@ -31,7 +31,7 @@ type (
 		UpdateBuilder() squirrel.UpdateBuilder
 		CountBuilder(field string) squirrel.SelectBuilder
 		SumBuilder(field string) squirrel.SelectBuilder
-		DeleteSoft(ctx context.Context,session sqlx.Session, id int64) error
+		DeleteSoft(ctx context.Context,session sqlx.Session, updateBuilder squirrel.UpdateBuilder, id int64) error
 		FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error)
 		FindSum(ctx context.Context,sumBuilder squirrel.SelectBuilder) (float64,error)
 		FindCount(ctx context.Context,countBuilder squirrel.SelectBuilder) (int64,error)
@@ -54,9 +54,9 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 	}
 }
 
-func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,session sqlx.Session,id int64) error {
-
-	if _,err:= m.UpdateWithId(ctx,session, m.UpdateBuilder().Where("id = ?", id).Set("del_state", globalkey.DelStateYes),id);err!= nil{
+func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,session sqlx.Session,updateBuilder squirrel.UpdateBuilder, id int64) error {
+	updateBuilder = updateBuilder.Where("id = ?", id).Set("del_state", globalkey.DelStateYes)
+	if _,err:= m.UpdateWithId(ctx,session, updateBuilder,id);err!= nil{
 		return errors.Wrapf(xerr.NewErrMsg("删除数据失败"),"{{.upperStartCamelObject}}Model delete err : %+v",err)
 	}
 	return nil
