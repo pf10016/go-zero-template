@@ -56,7 +56,7 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 
 func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,session sqlx.Session,id int64) error {
 
-	if err:= m.UpdateWithId(ctx,session, m.UpdateBuilder().Where("id = ?", id).Set("del_state", globalkey.DelStateYes),id);err!= nil{
+	if _,err:= m.UpdateWithId(ctx,session, m.UpdateBuilder().Where("id = ?", id).Set("del_state", globalkey.DelStateYes),id);err!= nil{
 		return errors.Wrapf(xerr.NewErrMsg("删除数据失败"),"{{.upperStartCamelObject}}Model delete err : %+v",err)
 	}
 	return nil
