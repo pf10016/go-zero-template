@@ -3,7 +3,7 @@ package {{.pkg}}
 import (
 	"context"
 
-
+    "panda/common/globalkey"
 	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/Masterminds/squirrel"
