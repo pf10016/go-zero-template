@@ -29,6 +29,7 @@ type (
 		UpdateBuilder() squirrel.UpdateBuilder
 		CountBuilder(field string) squirrel.SelectBuilder
 		SumBuilder(field string) squirrel.SelectBuilder
+		DeleteSoft(ctx context.Context,session sqlx.Session, id int64) error
 		FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error)
 		FindSum(ctx context.Context,sumBuilder squirrel.SelectBuilder) (float64,error)
 		FindCount(ctx context.Context,countBuilder squirrel.SelectBuilder) (int64,error)
@@ -50,9 +51,19 @@ func New{{.upperStartCamelObject}}Model(conn sqlx.SqlConn{{if .withCache}}, c ca
 		default{{.upperStartCamelObject}}Model: new{{.upperStartCamelObject}}Model(conn{{if .withCache}}, c{{end}}),
 	}
 }
+
+func (m *default{{.upperStartCamelObject}}Model) DeleteSoft(ctx context.Context,session sqlx.Session,id int64) error {
+
+	if err:= m.UpdateWithId(ctx,session, m.UpdateBuilder().Where("id = ?", id).Set("del_state", globalkey.DelStateYes),id);err!= nil{
+		return errors.Wrapf(xerr.NewErrMsg("删除数据失败"),"{{.upperStartCamelObject}}Model delete err : %+v",err)
+	}
+	return nil
+}
+
+
 func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Context,rowBuilder squirrel.SelectBuilder) (*{{.upperStartCamelObject}},error) {
 
-	query, values, err := rowBuilder.ToSql()
+	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +83,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindOneByQuery(ctx context.Cont
 
 func (m *default{{.upperStartCamelObject}}Model) FindSum(ctx context.Context,sumBuilder squirrel.SelectBuilder) (float64,error) {
 
-	query, values, err := sumBuilder.ToSql()
+	query, values, err := sumBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return 0, err
 	}
@@ -89,9 +100,10 @@ func (m *default{{.upperStartCamelObject}}Model) FindSum(ctx context.Context,sum
 	}
 }
 
+
 func (m *default{{.upperStartCamelObject}}Model) FindCount(ctx context.Context,countBuilder squirrel.SelectBuilder) (int64,error) {
 
-	query, values, err := countBuilder.ToSql()
+	query, values, err := countBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return 0, err
 	}
@@ -116,7 +128,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindAll(ctx context.Context,row
 		rowBuilder = rowBuilder.OrderBy(orderBy)
 	}
 
-	query, values, err := rowBuilder.ToSql()
+	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -132,7 +144,6 @@ func (m *default{{.upperStartCamelObject}}Model) FindAll(ctx context.Context,row
 		return nil, err
 	}
 }
-
 func (m *default{{.upperStartCamelObject}}Model) FindPageListByPage(ctx context.Context,rowBuilder squirrel.SelectBuilder,page ,pageSize int64,orderBy string) ([]*{{.upperStartCamelObject}},error) {
 
 	if orderBy == ""{
@@ -146,7 +157,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByPage(ctx context.
 	}
 	offset := (page - 1) * pageSize
 
-	query, values, err := rowBuilder.Offset(uint64(offset)).Limit(uint64(pageSize)).ToSql()
+	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).Offset(uint64(offset)).Limit(uint64(pageSize)).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -169,7 +180,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByIdDESC(ctx contex
 		rowBuilder = rowBuilder.Where(" id < ? " , preMinId)
 	}
 
-	query, values, err := rowBuilder.OrderBy("id DESC").Limit(uint64(pageSize)).ToSql()
+	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).OrderBy("id DESC").Limit(uint64(pageSize)).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -193,7 +204,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByIdASC(ctx context
 		rowBuilder = rowBuilder.Where(" id > ? " , preMaxId)
 	}
 
-	query, values, err := rowBuilder.OrderBy("id ASC").Limit(uint64(pageSize)).ToSql()
+	query, values, err := rowBuilder.Where("del_state = ?", globalkey.DelStateNo).OrderBy("id ASC").Limit(uint64(pageSize)).ToSql()
 	if err != nil {
 		return nil, err
 	}
@@ -209,6 +220,7 @@ func (m *default{{.upperStartCamelObject}}Model) FindPageListByIdASC(ctx context
 		return nil, err
 	}
 }
+
 
 // export logic
 func (m *default{{.upperStartCamelObject}}Model) Trans(ctx context.Context,fn func(ctx context.Context,session sqlx.Session) error) error {
