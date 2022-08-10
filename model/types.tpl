@@ -1,15 +1,15 @@
 
-type (
-	{{.lowerStartCamelObject}}Model interface{
-		{{.method}}
-	}
 
-	default{{.upperStartCamelObject}}Model struct {
-		{{if .withCache}}sqlc.CachedConn{{else}}conn sqlx.SqlConn{{end}}
-		table string
-	}
+type {{.lowerStartCamelObject}}Model interface{
+    {{.method}}
+}
 
-	{{.upperStartCamelObject}} struct {
-		{{.fields}}
-	}
-)
+type default{{.upperStartCamelObject}}Model struct {
+    {{if .withCache}}sqlc.CachedConn{{else}}conn sqlx.SqlConn{{end}}
+    table string
+}
+//go:generate sqlugen -structs {{.upperStartCamelObject}} -input .
+type {{.upperStartCamelObject}} struct {
+    {{.fields}}
+}
+
